@@ -278,6 +278,103 @@ const router = new VueRouter({
   linkActiveClass: 'active'
 });
 ```
+* 移动端1像素的原因及解决方式
 
+  * 因为devicePixelRatio特性导致，iPhone的devicePixelRatio==2，而border-width: 1px描述的是设备独立像素，所以，border被放大到物理像素2px显示，在iPhone上就显得较粗；UI设计师要求的1px是指设备的物理像素1px，而CSS里记录的像素是逻辑像素
+  
+  * 解决方案 采用缩放的形式
+  ```css
+  tab
+      border-1px(rgba(7, 17, 27, 0.1))
 
+  border-1px($color)
+    position: relative
+    &:after
+      display: block
+      position: absolute
+      left: 0
+      bottom: 0
+      width: 100%
+      border-top: 1px solid $color
+      content: ' '
+  @media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5)
+    .border-1px
+      &::after
+        -webkit-transform: scaleY(0.7)
+        transform: scaleY(0.7)
+  @media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2)
+    .border-1px
+      &::after
+        -webkit-transform: scaleY(0.5)
+        transform: scaleY(0.5)
+  ```
 
+## 第四步 vue-resource
+```bash
+npm install --save vue-resource
+```
+>编辑 main.js
+```javascript
+import VueResource from 'vue-resource';
+Vue.use(VueResource);
+```
+>编写 `App.vue` 代码：
+```javascript
+import header from './components/header/header.vue';
+
+const ERR_OK = 0;
+
+export default {
+  data() {
+    return {
+      seller: {
+
+      }
+    };
+  },
+  created() {
+    this.$http.get('/api/seller').then((response) => {
+      response = response.body;
+      if (response.errno === ERR_OK) {
+        this.seller = response.data;
+        console.log(this.seller);
+      }
+    });
+  },
+  components: {
+    'v-header': header
+  }
+};
+```
+* created钩子函数 用于初始化数据
+* `props`属性用于 接收数据
+
+>编写 `header.vue` 代码：
+```html
+<template>
+<div clas="header">
+  <div class="content-wrapper">
+    <div class="avatar">
+      <img width="64" height="64" :src="seller.avatar" alt="">
+    </div>
+  </div>
+  <div class="bulletin-wrapper"></div>
+</div>
+</template>
+
+<script type='text/ecmascript-6'>
+export default{
+  props: {
+    seller: {
+      type: Object
+    }
+  }
+};
+</script>
+
+<style lang='stylus' rel='stylesheet/stylus'>
+
+</style>
+
+```
+> `npm run dev` 查看 图片就显示过来了
