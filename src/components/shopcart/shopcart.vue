@@ -53,7 +53,8 @@ export default {
         {
           show: false
         }
-      ]
+      ],
+      dropBalls: []
     };
   },
   computed: {
@@ -86,6 +87,43 @@ export default {
         return 'no-enough';
       } else {
         return 'enough';
+      }
+    }
+  },
+  methods: {
+    drop(el) {
+      for (let i = 0; i < this.balls.length; i++) {
+        let ball = this.balls[i];
+        if (!ball.show) {
+          ball.show = true;
+          ball.el = el;
+          this.dropBalls.push(ball);
+          return;
+        }
+      }
+    },
+    transitions: {
+      drop: {
+        beforeEnter(el) {
+          let count = this.balls.length;
+          while ( count -- ) {
+            let ball = this.balls[count];
+            if (ball.show) {
+              let rect = ball.el.getBoundingClientRect();
+              let  x = rect.left;
+              let  y = -(window.innerHeight - rect.top - 22);
+              el.style.display = '';
+              el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+              el.style.transform = `translate3d(0,${y}px,0)`;
+            }
+          }
+        },
+        enter(el) {
+
+        },
+        afterEnter(el) {
+
+        }
       }
     }
   }
@@ -195,6 +233,6 @@ export default {
           width: 16px
           height: 16px
           border-radius: 50%
-          background: $color-blue
+          background: rgb(0, 160, 220)
           transition: all 0.4s linear
 </style>

@@ -30,7 +30,7 @@
                     <span v-show="food.oldPrice" class="old">￥{{ food.oldPrice }}</span>
                   </div>
                   <div  class="cartcontrol-wrapper">
-                    <cartcontrol :food="food"></cartcontrol>
+                    <cartcontrol :food="food"  v-on:cart-add="cartAdd"></cartcontrol>
                   </div>
                 </div>
             </li>
@@ -38,7 +38,7 @@
       </li>
     </ul>
   </div>
-  <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+  <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 </div>
 </template>
 
@@ -129,6 +129,11 @@ export default {
         height += item.clientHeight;
         this.listHeight.push(height);
       }
+    },
+    cartAdd (el) {
+      this.$nextTick(() => {
+        this.$refs['shopcart'].drop(el);
+      });
     }
   },
   components: {
