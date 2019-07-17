@@ -20,7 +20,7 @@
       <div v-for="(ball,$index) in balls" :key="$index">
         <transition name="drop">
           <div v-show="ball.show" class="ball" >
-            <div class="inner"></div>
+            <div class="inner inner-hook"></div>
           </div>
         </transition>
       </div>
@@ -106,23 +106,38 @@ export default {
       drop: {
         beforeEnter(el) {
           let count = this.balls.length;
-          while ( count -- ) {
+          while (count--) {
             let ball = this.balls[count];
             if (ball.show) {
               let rect = ball.el.getBoundingClientRect();
-              let  x = rect.left;
-              let  y = -(window.innerHeight - rect.top - 22);
+              let x = rect.left;
+              let y = -(window.innerHeight - rect.top - 22);
               el.style.display = '';
-              el.style.webkitTransform = `translate3d(0,${y}px,0)`;
-              el.style.transform = `translate3d(0,${y}px,0)`;
+              el.style.webkitTransform = `translate3d(0, ${y}px, 0)`;
+              el.style.transform = `translate3d(0, ${y}px, 0)`;
+              let inner = el.getElementsByClassName('inner-hook')[0];
+              inner.style.webkitTransform = `translate3d(${x}px, 0, 0)`;
+              inner.style.transform = `translate3d(${x}px, 0, 0)`;
             }
           }
         },
         enter(el) {
-
+          /* eslint-disable no-unused-vars */
+          let rf = el.offestHeight;
+          this.$$nextTick(() => {
+            el.style.webkitTransform = 'translate3d(0, 0, 0)';
+            el.style.transform = 'translate3d(0, 0, 0)';
+            let inner = el.getElementsByClassName('inner-hook')[0];
+            inner.style.webkitTransform = 'translate3d(0, 0, 0)';
+            inner.style.transform = 'translate3d(0, 0, 0)';
+          });
         },
         afterEnter(el) {
-
+          let ball = this.dropBalls.shift();
+          if (ball) {
+            ball.show = false;
+            el.style.display = 'none';
+          }
         }
       }
     }
