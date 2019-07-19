@@ -1,4 +1,7 @@
+/* eslint-disable vue/no-side-effects-in-computed-properties */
+/* eslint-disable vue/no-side-effects-in-computed-properties */
 <template>
+<div>
 <div class="shopcart">
   <div class="content" @click="toggleList">
     <div class="content-left">
@@ -11,7 +14,7 @@
       <div class="price" :class="{'highlight' : totalPrice>0}">￥{{totalPrice}}</div>
       <div class="desc">另需配送费 ￥{{deliveryPrice}}元</div>
     </div>
-    <div class="content-right">
+    <div class="content-right" @click.stop.prevent="pay">
       <div class="pay" :class="payClass">
        {{payDesc}}
       </div>
@@ -28,18 +31,18 @@
         </transition>
       </div>
     </div>
-    <transition name="fold">
+    <transition name="fade">
       <div class="shopcart-list" v-show="listShow" >
         <div class="list-header">
           <h1 class="title">购物车</h1>
-          <span class="empty">清空</span>
+          <span class="empty" @click="empty">清空</span>
         </div>
-        <div class="list-content" ref:lisContent>
+        <div class="list-content" ref="listContent">
           <ul>
             <li class="food" v-for="(food, index) in selectFoods" :key="index">
               <span class="name">{{food.name}}</span>
               <div class="price">
-                <span>￥ {{food.price*food.count  }}</span>
+                <span>￥ {{ food.price * food.count  }}</span>
               </div>
               <div class="cartcontrol-wrapper">
                 <cartcontrol :food="food"></cartcontrol>
@@ -50,6 +53,10 @@
       </div>
     </transition>
   </div>
+</div>
+    <transition name="fade">
+    <div class="list-mask" v-show="listShow" @click="hideList()"></div>
+    </transition>
 </div>
 </template>
 
@@ -121,29 +128,26 @@ export default {
         return 'enough';
       }
     },
-    listShow: {
-      get: function() {
-        return this.fold;
-      },
-      set: function() {
-        if (!this.totalCount) {
-          this.fold = true;
-          return false;
-        }
-        let show = !this.fold;
-        if (show) {
-          this.$nextTick(() => {
-            if (!this.scroll) {
-              this.scroll = new BScroll(this.$refs.lisContent, {
-                click: true
-              });
-            } else {
-              this.scroll.refresh();
-            }
-          });
-        }
-        return show;
+    listShow() {
+      if (!this.totalCount) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.fold = true;
+        return false;
       }
+      let show = !this.fold;
+      if (show) {
+        this.$nextTick(() => { // 调用 BSCroll插件
+          if (!this.scroll) {
+            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+            this.scroll = new BScroll(this.$refs.listContent, {
+              click: true
+            });
+          } else {
+            this.scroll.refresh(); // 因为listShow 是不断变化的，这里调用Bscroll的刷新接口
+          }
+        });
+      }
+      return show;
     }
   },
   methods: {
@@ -163,6 +167,20 @@ export default {
         return;
       }
       this.fold = !this.fold;
+    },
+    empty() {
+      this.selectFoods.forEach((food) => {
+        food.count = 0;
+      });
+    },
+    hideList() {
+      this.fold = true;
+    },
+    pay() {
+      if (this.totalPrice < this.minPrice) {
+        return;
+      }
+      window.alert(`支付￥${this.totalPrice}元`);
     },
     beforeDrop(el) {
       const ball = this.dropBalls[this.dropBalls.length - 1];
@@ -195,9 +213,8 @@ export default {
 };
 </script>
 
-<style lang='stylus' rel='stylesheet/stylus'>
-@import "../../common/stylus/mixin";
-
+<style lang="stylus" rel="stylesheet/stylus">
+@import "../../common/stylus/mixin"
   .shopcart
     position: fixed
     left: 0
@@ -306,11 +323,11 @@ export default {
       top: 0
       z-index: -1
       width: 100%
-      transition: all 0.5s
       transform: translate3d(0, -100%, 0)
-      &.fold-enter-active, &.fold-leave-active
-        transition: all 0.5s
-      &.fold-enter, &.fold-leave-active
+      &.fade-enter-active, &.fade-leave-active
+        transition: all 0.5s linear
+        transform: translate3d(0, -100%, 0)
+      &.fade-enter, &.fade-leave-active
         transform: translate3d(0, 0, 0)
       .list-header
         height: 40px
@@ -351,4 +368,22 @@ export default {
             position: absolute
             right: 0
             bottom: 6px
+  .list-mask
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: 40
+    backdrop-filter blur(10px) // 模糊效果
+    -webkit-backdrop-filter blur(10px)
+    opacity: 1
+    background: rgba( 7, 17, 27, 0.6)
+    &.fade-enter-active, &.fade-leave-active
+      opacity: 1
+      transition: all 0.5s
+      background: rgba(7, 17, 27, 0.6)
+    &.fade-enter, &.fade-leave-active
+      opacity: 0
+      background: rgba(7, 17, 27, 0)
 </style>
