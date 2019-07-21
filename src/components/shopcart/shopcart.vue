@@ -1,5 +1,3 @@
-/* eslint-disable vue/no-side-effects-in-computed-properties */
-/* eslint-disable vue/no-side-effects-in-computed-properties */
 <template>
 <div>
 <div class="shopcart">
@@ -45,7 +43,7 @@
                 <span>￥ {{ food.price * food.count  }}</span>
               </div>
               <div class="cartcontrol-wrapper">
-                <cartcontrol :food="food"></cartcontrol>
+                <cartcontrol :food="food" @add="drop"></cartcontrol>
               </div>
             </li>
           </ul>
