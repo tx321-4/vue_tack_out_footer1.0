@@ -223,7 +223,7 @@ export default {
     background: #000
     .content
       display: flex
-      background: #141d27
+      background: #07111b
       font-size: 0
       color: rgba(255, 255, 255, 0.4)
       .content-left
@@ -258,7 +258,7 @@ export default {
             position: absolute
             top: 0
             right: 0
-            width: 24px
+            padding: 0 5px
             height: 16px
             line-height: 16px
             text-align: center
@@ -266,8 +266,8 @@ export default {
             font-size: 9px
             font-weight: 700
             color: #fff
-            background: rgb(240, 20, 20)
-            box-shaodw: 0 4px 8px 0 rgba(0, 0, 0, 0.4)
+            background: linear-gradient(90deg,#fc9153,#f01414)
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4)
         .price
           display: inline-block
           vertical-align: top
