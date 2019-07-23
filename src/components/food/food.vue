@@ -33,7 +33,7 @@
       <split></split>
       <div class="rating">
         <h1 class="title">商品评价</h1>
-        <ratingselect selet-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.rating"></ratingselect>
+        <ratingselect selet-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
       </div>
     </div>
 
@@ -205,4 +205,11 @@ export default {
         padding: 0 8px
         font-size: 12px
         color: rgb(77, 85, 93)
+    .rating
+      padding-top: 18px
+      .title
+       line-height: 14px
+       margin-left: 18px
+       font-size: 14px
+       color: #333
 </style>
