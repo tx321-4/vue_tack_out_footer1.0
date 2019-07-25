@@ -239,7 +239,7 @@ export default {
           height: 56px
           box-sizing: border-box
           border-radius: 50%
-          background: #141d27
+          background: #07111b
           .logo
             width: 100%
             height: 100%
