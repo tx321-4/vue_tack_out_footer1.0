@@ -29,7 +29,7 @@ export default {
       seller: {
         id: (() => {
         let queryParam = urlParse();
-        console.log(queryParam);
+       // console.log(queryParam);
         return queryParam.id;
         })()
       }
@@ -40,7 +40,7 @@ export default {
       response = response.body;
       if (response.errno === ERR_OK) {
         this.seller = Object.assign({}, this.seller, response.data);
-        console.log(this.seller);
+        // console.log(this.seller);
       }
     });
   },
